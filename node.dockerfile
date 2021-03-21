@@ -25,7 +25,9 @@ RUN set -eux; \
   mkdir -p "$GHOST_DATA" && chown node:node "$GHOST_DATA"; \
   mkdir -p "$GHOST_IMAGES" && chown node:node "$GHOST_IMAGES"; \
   mkdir -p "$GHOST_SETTINGS" && chown node:node "$GHOST_SETTINGS"; \
-  cd "$GHOST_INSTALL"; \
+  cd $GHOST_INSTALL; \
+  find $GHOST_INSTALL -type d -exec chmod 00775 {} \; ; \
+  cp -R ${GHOST_CONTENT}.orig/themes/* $GHOST_THEMES && chown node:node "$GHOST_THEMES"; \
   su-exec node ghost version; \
   su-exec node ghost config --port 3000 --url http://localhost:3000; \
   su-exec node ghost config --log "stdout";
