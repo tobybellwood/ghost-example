@@ -9,17 +9,10 @@ ENV GHOST_INSTALL="/var/lib/ghost" \
   GHOST_DATA="/var/lib/ghost/content/data" \
   GHOST_IMAGES="/var/lib/ghost/content/images" \
   GHOST_SETTINGS="/var/lib/ghost/content/settings" \
-  NODE_ENV="production" \
-  GHOST_CLI_VERSION="latest" \
-  HOME="/home/node"
+  NODE_ENV="production"
 
 COPY --from=builder --chown=node:node "${GHOST_INSTALL}" "${GHOST_INSTALL}"
 
-RUN set -eux; \
-  npm install -g "ghost-cli@$GHOST_CLI_VERSION"; \
-  npm cache clean --force
-
-RUN apk add --no-cache 'su-exec>=0.2'
 RUN set -eux; \
   mkdir -p "$GHOST_THEMES" && chown node:node "$GHOST_THEMES"; \
   mkdir -p "$GHOST_APPS" && chown node:node "$GHOST_APPS"; \
@@ -28,15 +21,13 @@ RUN set -eux; \
   mkdir -p "$GHOST_SETTINGS" && chown node:node "$GHOST_SETTINGS"; \
   cd $GHOST_INSTALL; \
   find $GHOST_INSTALL -type d -exec chmod 00775 {} \; ; \
-  cp -R ${GHOST_CONTENT}.orig/themes/* $GHOST_THEMES && chown node:node "$GHOST_THEMES"; \
-  su-exec node ghost version; \
-  su-exec node ghost config --port 3000; \
-  su-exec node ghost config --url "http://localhost:3000"; \
-  su-exec node ghost config --log "stdout"; \
-  su-exec node ghost config set server.host 0.0.0.0;
+  cp -R ${GHOST_CONTENT}.orig/themes/* $GHOST_THEMES && chown node:node "$GHOST_THEMES";
 
 WORKDIR $GHOST_INSTALL
+COPY config.production.json .
+RUN ep config.production.json
 EXPOSE 3000
+VOLUME $GHOST_DATA
 
 # Run as the node user (as ghost does not like running as root).
 USER 1000

@@ -1,0 +1,44 @@
+{
+    "url": "http://yourdomain",
+    "server": {
+        "port": 3000,
+        "host": "0.0.0.0"
+    },
+    "database": {
+        "client": "mysql",
+        "connection": {
+            "host": "${MARIADB_HOST:-mariadb}",
+            "port": 3306,
+            "user": "${MARIADB_USER:-lagoon}",
+            "password": "${MARIADB_PASSWORD:-lagoon}",
+            "database": "${MARIADB_DATABASE:-lagoon}",
+            "charset": "utf8mb4"
+        },
+        "pool": {
+            "min": 0,
+            "max": 32
+          }
+    },
+    "mail": {
+        "from": "'Custom Name' <myemail@address.com>", 
+        "transport": "SMTP",
+        "logger": true,
+        "options": {
+            "host": "",
+            "secureConnection": false,
+            "auth": {
+                "user": "",
+                "pass": ""
+            }
+        }
+    },
+    "logging": {
+        "transports": [
+            "stdout"
+        ]
+    },
+    "process": "systemd",
+    "paths": {
+        "contentPath": "/var/lib/ghost/content"
+    }
+}
