@@ -35,4 +35,8 @@ RUN set -eux; \
 WORKDIR $GHOST_INSTALL
 EXPOSE 3000
 
+# Run as the node user (as ghost does not like running as root).
+USER 1000
+
+# @TODO wait for the database to start.
 CMD ["node", "current/index.js"]
