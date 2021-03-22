@@ -10,7 +10,8 @@ ENV GHOST_INSTALL="/var/lib/ghost" \
   GHOST_IMAGES="/var/lib/ghost/content/images" \
   GHOST_SETTINGS="/var/lib/ghost/content/settings" \
   NODE_ENV="production" \
-  GHOST_CLI_VERSION="latest"
+  GHOST_CLI_VERSION="latest" \
+  HOME="/home/node"
 
 COPY --from=builder --chown=node:node "${GHOST_INSTALL}" "${GHOST_INSTALL}"
 
@@ -29,8 +30,11 @@ RUN set -eux; \
   find $GHOST_INSTALL -type d -exec chmod 00775 {} \; ; \
   cp -R ${GHOST_CONTENT}.orig/themes/* $GHOST_THEMES && chown node:node "$GHOST_THEMES"; \
   su-exec node ghost version; \
-  su-exec node ghost config --port 3000 --url http://localhost:3000; \
-  su-exec node ghost config --log "stdout";
+  su-exec node ghost config --port 3000; \
+  su-exec node ghost config --url "http://localhost:3000"; \
+  su-exec node ghost config --ip "0.0.0.0"; \
+  su-exec node ghost config --log "stdout" \
+  sed -i -e '#"host": "127.0.0.1"#"host": "0.0.0.0"#' config.production.json;
 
 WORKDIR $GHOST_INSTALL
 EXPOSE 3000
