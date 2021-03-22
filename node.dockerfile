@@ -32,9 +32,8 @@ RUN set -eux; \
   su-exec node ghost version; \
   su-exec node ghost config --port 3000; \
   su-exec node ghost config --url "http://localhost:3000"; \
-  su-exec node ghost config --ip "0.0.0.0"; \
-  su-exec node ghost config --log "stdout" \
-  sed -i -e '#"host": "127.0.0.1"#"host": "0.0.0.0"#' config.production.json;
+  su-exec node ghost config --log "stdout"; \
+  su-exec node ghost config set server.host 0.0.0.0;
 
 WORKDIR $GHOST_INSTALL
 EXPOSE 3000
